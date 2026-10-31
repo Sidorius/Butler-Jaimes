@@ -1,0 +1,18 @@
+# Server: Blazor mirror UI (.NET 10). Published to /opt/butler/mirror-ui via `dotnet publish`.
+[Unit]
+Description=Butler Jaimes mirror UI (Blazor)
+After=network-online.target butler-stack.service
+Wants=network-online.target
+
+[Service]
+User=butler
+WorkingDirectory=/opt/butler/mirror-ui
+ExecStart=/usr/bin/dotnet /opt/butler/mirror-ui/MirrorUi.dll --urls http://0.0.0.0:5000
+EnvironmentFile=-/opt/butler/.env
+Environment=ASPNETCORE_ENVIRONMENT=Production
+# Broker credentials arrive as Mqtt__Username / Mqtt__Password from the env file.
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

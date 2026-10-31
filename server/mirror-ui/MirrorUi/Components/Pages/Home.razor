@@ -1,0 +1,31 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@implements IDisposable
+@using MirrorUi.Components.Widgets
+
+<PageTitle>Butler Jaimes</PageTitle>
+
+<div class="dashboard @(_night ? "night" : "")">
+    <ClockWidget />
+    <StatusWidget />
+</div>
+
+@code {
+    private bool _night;
+    private Timer? _timer;
+
+    // Night mode: dim between 22:00 and 06:00 (PRD: "Display dimmt automatisch").
+    protected override void OnInitialized()
+    {
+        _night = IsNight(DateTime.Now);
+        _timer = new Timer(_ => InvokeAsync(() =>
+        {
+            var night = IsNight(DateTime.Now);
+            if (night != _night) { _night = night; StateHasChanged(); }
+        }), null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+    }
+
+    private static bool IsNight(DateTime t) => t.Hour >= 22 || t.Hour < 6;
+
+    public void Dispose() => _timer?.Dispose();
+}

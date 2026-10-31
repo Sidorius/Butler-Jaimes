@@ -1,0 +1,36 @@
+/* Mirror UI: pure black = transparent behind the two-way glass. Portrait 27" (1080x1920). */
+html, body {
+    margin: 0;
+    height: 100%;
+    background: #000;
+    color: #fff;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+    cursor: none; /* touch kiosk, no pointer */
+}
+
+.mirror { height: 100vh; padding: 4vh 5vw; box-sizing: border-box; }
+
+.dashboard { display: flex; flex-direction: column; gap: 4vh; transition: opacity 1s; }
+.dashboard.night { opacity: .25; }
+
+.widget h2 { font-size: 1.6rem; font-weight: 300; letter-spacing: .15em; text-transform: uppercase; opacity: .6; margin: 0 0 1rem; }
+
+.clock .time { font-size: 9rem; font-weight: 200; line-height: 1; }
+.clock .date { font-size: 2.2rem; font-weight: 300; opacity: .7; }
+
+.butler { display: flex; align-items: center; gap: 1rem; font-size: 2rem; font-weight: 300; }
+.butler .dot { width: 1.2rem; height: 1.2rem; border-radius: 50%; background: #fff; opacity: .5; }
+.butler.listening .dot { background: #3b82f6; opacity: 1; }
+.butler.thinking .dot { background: #facc15; opacity: 1; }
+.butler.speaking .dot { background: #22c55e; opacity: 1; }
+.butler.error .dot { background: #ef4444; opacity: 1; }
+.butler.routine .dot { background: #fb923c; opacity: 1; }
+
+.status .warn { color: #fb923c; font-size: 1.4rem; margin-top: 1rem; }
+.devices { list-style: none; padding: 0; margin: 1.5rem 0 0; font-size: 1.6rem; font-weight: 300; }
+.devices li { display: flex; justify-content: space-between; padding: .4rem 0; border-bottom: 1px solid #222; }
+.devices li.unreachable { color: #ef4444; }
+
+#blazor-error-ui { display: none; position: fixed; bottom: 0; left: 0; right: 0; padding: 1rem; background: #7f1d1d; color: #fff; }
+#blazor-error-ui .dismiss { cursor: pointer; float: right; }

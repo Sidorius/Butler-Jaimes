@@ -1,0 +1,37 @@
+# --- Lokale Claude-Code-Datei ---
+CLAUDE.md
+
+# --- Projektdokumente: nur lokal, nie in Git ---
+docs/*
+
+# --- Secrets & lokale Konfiguration ---
+.env
+.env.*
+!.env.example
+*.local.yaml
+*.local.json
+secrets.json
+
+# --- Python ---
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# --- .NET ---
+bin/
+obj/
+.vs/
+*.user
+
+# --- Modelle & Binaerdaten (gross / account-gebunden) ---
+pi/models/
+*.ppn
+*.onnx
+*.gguf
+*.bin
+
+# --- Sonstiges ---
+*.log
+.DS_Store
+config/agents.yaml

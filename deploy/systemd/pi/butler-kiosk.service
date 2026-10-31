@@ -1,0 +1,18 @@
+# Pi: Chromium kiosk showing the mirror UI of the server (Phase 2 content, unit prepared in Phase 0).
+# Replace <server-ip> with SERVER_IP. If the server boots slower than the Pi (UC-21),
+# the wait loop below retries instead of showing a Chromium error page.
+[Unit]
+Description=Butler Jaimes kiosk (Chromium)
+After=graphical.target network-online.target
+Wants=network-online.target
+
+[Service]
+User=pi
+Environment=DISPLAY=:0
+ExecStartPre=/bin/sh -c 'until curl -sf -o /dev/null http://<server-ip>:5000/; do sleep 3; done'
+ExecStart=/usr/bin/chromium-browser --kiosk --noerrdialogs --disable-infobars --incognito http://<server-ip>:5000/
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target

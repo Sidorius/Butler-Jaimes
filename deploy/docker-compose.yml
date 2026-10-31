@@ -1,0 +1,33 @@
+# Server stack (Phase 0): Mosquitto + Home Assistant.
+# Start: docker compose --env-file .env up -d   (from this folder)
+# restart: unless-stopped brings both back after a power outage (UC-21).
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: butler-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/passwd:/mosquitto/config/passwd:ro
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: butler-homeassistant
+    restart: unless-stopped
+    # Host networking: HA discovers devices via broadcast/mDNS and listens on 8123.
+    network_mode: host
+    environment:
+      TZ: ${TZ:-Europe/Berlin}
+    volumes:
+      - ../server/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - mosquitto
+
+volumes:
+  mosquitto-data:
+  mosquitto-log:

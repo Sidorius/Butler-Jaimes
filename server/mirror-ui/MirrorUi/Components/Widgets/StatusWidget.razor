@@ -1,0 +1,54 @@
+@using MirrorUi.Services
+@implements IDisposable
+@inject DashboardState State
+
+<section class="widget status">
+    <h2>Jaimes</h2>
+    <div class="butler @StateClass">
+        <span class="dot"></span>
+        <span>@StateText</span>
+    </div>
+
+    @if (!State.MqttConnected)
+    {
+        <p class="warn">Keine Verbindung zum Nachrichtensystem. Neuer Versuch läuft …</p>
+    }
+
+    @if (State.Devices.Count > 0)
+    {
+        <ul class="devices">
+            @foreach (var d in State.Devices)
+            {
+                <li class="@(d.Reachable ? "" : "unreachable")">
+                    <span>@d.Id</span>
+                    <span>@DeviceText(d)</span>
+                </li>
+            }
+        </ul>
+    }
+</section>
+
+@code {
+    private string StateClass => State.Butler.ToString().ToLowerInvariant();
+
+    private string StateText => State.Butler switch
+    {
+        ButlerState.Idle => "Bereit",
+        ButlerState.Listening => "Ich höre zu",
+        ButlerState.Thinking => "Ich denke nach",
+        ButlerState.Speaking => "Ich antworte",
+        ButlerState.Error => "Es gab ein Problem",
+        ButlerState.Routine => "Routine läuft",
+        _ => "",
+    };
+
+    private static string DeviceText(DeviceStatus d) =>
+        !d.Reachable ? "nicht erreichbar" : d.IsOn switch { true => "an", false => "aus", _ => "–" };
+
+    protected override void OnInitialized() => State.Changed += OnChanged;
+
+    // State changes arrive on an MQTT thread; marshal to the Blazor renderer.
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => State.Changed -= OnChanged;
+}

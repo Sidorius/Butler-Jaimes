@@ -1,0 +1,25 @@
+@implements IDisposable
+@using System.Globalization
+
+<section class="widget clock">
+    <div class="time">@_now.ToString("HH:mm")</div>
+    <div class="date">@_now.ToString("dddd, d. MMMM", De)</div>
+</section>
+
+@code {
+    private static readonly CultureInfo De = new("de-DE");
+    private DateTime _now = DateTime.Now;
+    private Timer? _timer;
+
+    protected override void OnInitialized()
+    {
+        // Timer callbacks run on a thread-pool thread, so marshal back with InvokeAsync.
+        _timer = new Timer(_ => InvokeAsync(() =>
+        {
+            _now = DateTime.Now;
+            StateHasChanged();
+        }), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+    }
+
+    public void Dispose() => _timer?.Dispose();
+}
